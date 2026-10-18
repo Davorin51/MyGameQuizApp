@@ -70,6 +70,13 @@ are retained for a focused first change; JCenter and the duplicate Material decl
 removed, and JUnit is pinned to 4.13.2. Full transitive dependency locking/verification remains
 in the roadmap; the Gradle distribution download is SHA-256 checked.
 
+## Verified build
+
+The [first successful Android CI run](https://github.com/Davorin51/MyGameQuizApp/actions/runs/39132119463)
+executed the Kotlin/JVM and bundled-pack unit tests, Kotlin formatting, Android lint and
+**debug APK assembly**. Download the `debug-apk` and `verification-reports` artifacts from
+that run while available. This is build/test evidence, not an emulator or real-device run.
+
 ## Tests and quality
 
 ```bash
