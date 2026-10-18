@@ -98,7 +98,7 @@ running-app evidence. That verification is tracked in the roadmap.
 
 ## Privacy and licensing
 
-No accounts, trackers, ads or network clients are added. The optional local display name is
+No accounts, trackers, ads or network clients are added. The player display name is
 used for the quiz/result flow and Android instance state; it is not sent to a server.
 Persistent progress/history is not implemented. Existing Android backup behavior needs review
 when durable progress is introduced.

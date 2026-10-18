@@ -15,8 +15,12 @@ The Gradle invocation for `:quiz-core:test spotlessApply` reached project config
 could not resolve the Android Gradle plugin through this environment's Java network path.
 This is a dependency-resolution failure, not a passing test or a source compilation result.
 
-Kotlin formatting is also checked with the pinned ktlint CLI. GitHub Actions provides the
-separate Android SDK/JDK build environment; its actual result will be recorded after execution.
+The pinned ktlint 1.5.0 CLI completed formatting and a subsequent check with no violations.
+A supplemental direct JVM compile using its embedded Kotlin 2.1.0 compiler, followed by
+JUnit 4.13.2, passed **15 core tests** (including the 200 seeded random sessions). This proves
+that core source/tests executed locally; it is not a Gradle/Android build or verification of
+the configured Kotlin 2.1.21 build. GitHub Actions provides the separate SDK/JDK environment;
+its actual configured-build result will be recorded after execution.
 No emulator/device UI tests or screenshots have been produced in this environment.
 
 ## Intended regression coverage
@@ -29,3 +33,8 @@ No emulator/device UI tests or screenshots have been produced in this environmen
 - Actual bundled question adapter validates and completes with seven correct answers.
 
 This list describes test source; only an executed test report establishes a pass.
+
+The first CI run stopped in SDK setup because the setup action defaults to the obsolete
+`tools` package, which the SDK repository no longer provides. The workflow now requests
+only the specific platform/build-tools packages and platform-tools. No compile/test result
+is attributed to that failed setup run.

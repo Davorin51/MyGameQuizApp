@@ -15,8 +15,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-35 build-tools;34.0.0
       - uses: gradle/actions/setup-gradle@v4
-      - run: sdkmanager 'platforms;android-35' 'build-tools;34.0.0'
       - run: bash gradlew :quiz-core:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug spotlessCheck --no-daemon
       - uses: actions/upload-artifact@v4
         if: always()
