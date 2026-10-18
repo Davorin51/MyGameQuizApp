@@ -1,54 +1,81 @@
 package com.example.mygame
 
 object Constants {
+    const val USER_NAME = "user name"
+    const val TOTAL_QUESTIONS = "total_questions"
+    const val CORRECT_ANSWERS = "correct_answers"
 
-    const val USER_NAME: String = "user name"
-    const val TOTAL_QUESTIONS:String = "total_questions"
-    const val CORRECT_ANSWERS: String = "correct_answers"
-    fun getQuestions(): ArrayList<Question>{
-        val questionList = ArrayList<Question>()
-
-        val que1 = Question(1, "Whose country this flag belongs?"
-        , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
+    /** Small original sample pack. Resource ID zero means a text-only question. */
+    fun getQuestions(): ArrayList<Question> = arrayListOf(
+        Question(
+            1,
+            "Which country does this flag represent?",
+            R.drawable.brazil_flag,
+            "Argentina",
+            "Austria",
+            "Brazil",
+            "Germany",
+            3
+        ),
+        Question(
+            2,
+            "Which country has Canberra as its capital?",
+            0,
+            "Canada",
+            "Australia",
+            "New Zealand",
+            "Ireland",
+            2
+        ),
+        Question(
+            3,
+            "On which continent is Kenya located?",
+            0,
+            "Asia",
+            "Europe",
+            "Africa",
+            "South America",
+            3
+        ),
+        Question(
+            4,
+            "Which ocean lies between Africa and Australia?",
+            0,
+            "Atlantic",
+            "Arctic",
+            "Pacific",
+            "Indian",
+            4
+        ),
+        Question(
+            5,
+            "Which of these countries is landlocked?",
+            0,
+            "Nepal",
+            "Portugal",
+            "Japan",
+            "Chile",
+            1
+        ),
+        Question(
+            6,
+            "Which country borders both Spain and the Atlantic Ocean?",
+            0,
+            "Italy",
+            "Portugal",
+            "Greece",
+            "Austria",
+            2
+        ),
+        Question(
+            7,
+            "Which continent contains the South Pole?",
+            0,
+            "Europe",
+            "Africa",
+            "Antarctica",
+            "Australia",
             3
         )
-questionList.add(que1)
-
-        val que2 = Question(2, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que2)
-
-        val que3 = Question(3, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que3)
-
-        val que4 = Question(1, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que4)
-
-        val que5 = Question(2, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que5)
-
-        val que6 = Question(4, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que6)
-
-        val que7= Question(1, "Whose country this flag belongs?"
-            , R.drawable.brazil1, optionOne = "Argentina", optionTwo = "Austria", optionThree = "Brazil", optionFour = "Germany",
-            3
-        )
-        questionList.add(que7)
-        return questionList
-    }
+    )
 }

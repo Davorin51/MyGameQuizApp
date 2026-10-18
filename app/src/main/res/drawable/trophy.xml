@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original trophy geometry, authored for this modernization. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp" android:height="140dp" android:viewportWidth="120" android:viewportHeight="140">
+    <path android:strokeColor="#FFC83D" android:strokeWidth="8" android:fillColor="#00000000"
+        android:pathData="M30,20H12V40Q12,64 38,64M90,20H108V40Q108,64 82,64" />
+    <path android:fillColor="#FFC83D" android:pathData="M28,10H92V46Q92,80 60,88Q28,80 28,46Z" />
+    <path android:fillColor="#FFE38A" android:pathData="M38,20H48V52Q48,65 54,69Q38,64 38,46Z" />
+    <path android:fillColor="#FFC83D" android:pathData="M54,84H66V115H54ZM32,116H88V130H32Z" />
+</vector>

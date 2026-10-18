@@ -1,187 +1,145 @@
 package com.example.mygame
 
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.mygame.core.QuizSession
+import com.example.mygame.core.SessionSnapshot
+import com.example.mygame.core.SubmitResult
+import com.example.mygame.databinding.ActivityQuizQuestionsBinding
 
-class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
-
-private var mCurrentPosition: Int = 1
-    private var mQuestionsList: ArrayList<Question>? = null
-    private var mSelectedOptionPosition : Int = 0
-    private var mCorrectAnswers: Int = 0
-    private var mUserName: String? = null
-
+/** XML screens remain intact; scoring and transitions belong to the JVM domain module. */
+class QuizQuestionsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityQuizQuestionsBinding
+    private lateinit var session: QuizSession
+    private val questions = Constants.getQuestions()
+    private val options: List<TextView> get() = with(binding) {
+        listOf(tvOptionOne, tvOptionTwo, tvOptionThree, tvOptionFour)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_quiz_questions)
-
-        mUserName = intent.getStringExtra(Constants.USER_NAME)
-
-
-        val tv_option_one = findViewById<TextView>(R.id.tv_option_one)
-        val tv_option_two = findViewById<TextView>(R.id.tv_option_two)
-        val tv_option_three = findViewById<TextView>(R.id.tv_option_three)
-        val tv_option_four = findViewById<TextView>(R.id.tv_option_four)
-
-
-        mQuestionsList = Constants.getQuestions()
-
-setQuestion()
-
-        tv_option_one.setOnClickListener(this)
-        tv_option_two.setOnClickListener(this)
-        tv_option_three.setOnClickListener(this)
-        tv_option_four.setOnClickListener(this)
-    val btnSubmit = findViewById<Button>(R.id.btn_submit)
-        btnSubmit.setOnClickListener(this)
-
-
-    }
-
-     fun setQuestion(){
-
-        val question = mQuestionsList!![mCurrentPosition-1]
-         val btnSubmit = findViewById<Button>(R.id.btn_submit)
-        defaultOptionsView()
-
-         if(mCurrentPosition == mQuestionsList!!.size){
-             btnSubmit.text = "FINISH"
-         }else{
-             btnSubmit.text = "SUBMIT"
-         }
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        progressBar.progress = mCurrentPosition
-        val tv_progress = findViewById<TextView>(R.id.tv_progress)
-        tv_progress.text = "$mCurrentPosition" + "/" + progressBar.max
-
-        val tv_question = findViewById<TextView>(R.id.tv_question)
-        tv_question.text = question!!.question
-        val tv_image = findViewById<ImageView>(R.id.tv_image)
-        tv_image.setImageResource(question.image)
-
-        val tv_option_one = findViewById<TextView>(R.id.tv_option_one)
-        val tv_option_two = findViewById<TextView>(R.id.tv_option_two)
-        val tv_option_three = findViewById<TextView>(R.id.tv_option_three)
-        val tv_option_four = findViewById<TextView>(R.id.tv_option_four)
-
-        tv_option_one.text = question.optionOne
-        tv_option_two.text = question.optionTwo
-        tv_option_three.text = question.optionThree
-        tv_option_four.text = question.optionFour
-
-    }
-
-    private fun defaultOptionsView(){
-        val options = ArrayList<TextView>()
-
-        val tv_option_one = findViewById<TextView>(R.id.tv_option_one)
-        val tv_option_two = findViewById<TextView>(R.id.tv_option_two)
-        val tv_option_three = findViewById<TextView>(R.id.tv_option_three)
-        val tv_option_four = findViewById<TextView>(R.id.tv_option_four)
-
-        options.add(0, tv_option_one)
-        options.add(1, tv_option_two)
-        options.add(2, tv_option_three)
-        options.add(3, tv_option_four)
-
-        for(option in options){
-            option.setTextColor(Color.parseColor("#7A8089"))
-            option.typeface = Typeface.DEFAULT
-            option.background = ContextCompat.getDrawable(this, R.drawable.default_option)
+        binding = ActivityQuizQuestionsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        val domainQuestions = questions.map(Question::toDomain)
+        session = if (savedInstanceState?.containsKey(SAVED_INDEX) == true) {
+            val selection = savedInstanceState.getInt(SAVED_SELECTION, 0).takeIf { it != 0 }
+            val snapshot = SessionSnapshot(
+                savedInstanceState.getIntArray(SAVED_ANSWERS)?.toList().orEmpty(),
+                selection,
+                savedInstanceState.getBoolean(SAVED_COMPLETE),
+                savedInstanceState.getInt(SAVED_INDEX)
+            )
+            try {
+                QuizSession.restore(domainQuestions, snapshot)
+            } catch (_: IllegalArgumentException) {
+                // Stale state must never produce an invalid score or crash the screen.
+                QuizSession(domainQuestions)
+            }
+        } else {
+            QuizSession(domainQuestions)
         }
-    }
-
-    override fun onClick(v: View?) {
-        val btnSubmit = findViewById<Button>(R.id.btn_submit)
-        val tv_option_one = findViewById<TextView>(R.id.tv_option_one)
-        val tv_option_two = findViewById<TextView>(R.id.tv_option_two)
-        val tv_option_three = findViewById<TextView>(R.id.tv_option_three)
-        val tv_option_four = findViewById<TextView>(R.id.tv_option_four)
-
-        when(v?.id){
-            R.id.tv_option_one ->{
-                selectedOptionView(tv_option_one, 1)
+        options.forEachIndexed { index, option ->
+            option.isFocusable = true
+            option.setOnClickListener {
+                if (session.select(index + 1)) render()
             }
-            R.id.tv_option_two ->{
-                selectedOptionView(tv_option_two, 2)
-            }
-            R.id.tv_option_three ->{
-                selectedOptionView(tv_option_three, 3)
-            }
-            R.id.tv_option_four ->{
-                selectedOptionView(tv_option_four, 4)
-            }
-            R.id.btn_submit -> {
-                if(mSelectedOptionPosition == 0){
-                    mCurrentPosition ++
-
-                    when{
-                        mCurrentPosition <= mQuestionsList!!.size -> {
-                            setQuestion()
-                        }else ->{
-                           val intent = Intent(this, ResultActivity::class.java)
-                            intent.putExtra(Constants.USER_NAME, mUserName)
-                        intent.putExtra(Constants.CORRECT_ANSWERS, mCorrectAnswers)
-                        intent.putExtra(Constants.TOTAL_QUESTIONS, mQuestionsList!!.size)
-                        startActivity(intent)
-
-                        }
+        }
+        binding.btnSubmit.setOnClickListener {
+            if (session.isAnswered) {
+                session.advance()
+                if (session.isComplete) showResult() else render()
+            } else {
+                when (session.submit()) {
+                    SubmitResult.NO_SELECTION -> {
+                        binding.tvFeedback.setText(R.string.choose_answer)
+                        binding.tvFeedback.announceForAccessibility(
+                            getString(R.string.choose_answer)
+                        )
                     }
-                }else{
-                    val question = mQuestionsList?.get(mCurrentPosition-1)
-                    if(question!!.correctAnswer != mSelectedOptionPosition){
-                        answerView(mSelectedOptionPosition, R.drawable.wrong_option)
-                    }else{
-                        mCorrectAnswers++
-                    }
-                    answerView(question.correctAnswer, R.drawable.corrected_option)
-
-                    if(mCurrentPosition == mQuestionsList!!.size){
-                        btnSubmit.text = "FINISH"
-                    }else{
-                        btnSubmit.text = "GO TO NEXT QUESTION"
-                    }
-                    mSelectedOptionPosition = 0
+                    SubmitResult.CORRECT, SubmitResult.INCORRECT -> render()
+                    else -> Unit
                 }
             }
         }
+        if (session.isComplete) showResult() else render()
     }
-    private fun answerView(answer: Int, drawableView : Int){
-        val tv_option_one = findViewById<TextView>(R.id.tv_option_one)
-        val tv_option_two = findViewById<TextView>(R.id.tv_option_two)
-        val tv_option_three = findViewById<TextView>(R.id.tv_option_three)
-        val tv_option_four = findViewById<TextView>(R.id.tv_option_four)
 
-        when(answer){
-            1 ->{
-                tv_option_one.background = ContextCompat.getDrawable(this, drawableView)
+    private fun render() = with(binding) {
+        val question = questions[session.currentIndex]
+        tvQuestion.text = question.question
+        tvImage.visibility = if (question.image == 0) View.GONE else View.VISIBLE
+        if (question.image != 0) tvImage.setImageResource(question.image)
+        progressBar.max = session.total
+        progressBar.progress = session.currentIndex + 1
+        tvProgress.text =
+            getString(R.string.question_progress, session.currentIndex + 1, session.total)
+        options.forEachIndexed { index, option ->
+            val position = index + 1
+            option.text = session.currentQuestion.options[index]
+            option.isEnabled = !session.isAnswered
+            option.isSelected = position == session.selectedAnswer
+            option.setTextColor(
+                ContextCompat.getColor(this@QuizQuestionsActivity, R.color.option_text)
+            )
+            option.setTypeface(null, if (option.isSelected) Typeface.BOLD else Typeface.NORMAL)
+            val background = when {
+                session.isAnswered && position == question.correctAnswer ->
+                    R.drawable.corrected_option
+                session.isAnswered && option.isSelected -> R.drawable.wrong_option
+                option.isSelected -> R.drawable.selected_option
+                else -> R.drawable.default_option
             }
-            2 ->{
-                tv_option_two.background = ContextCompat.getDrawable(this, drawableView)
-            }
-            3 ->{
-                tv_option_three.background = ContextCompat.getDrawable(this, drawableView)
-            }
-            4 ->{
-                tv_option_four.background = ContextCompat.getDrawable(this, drawableView)
-            }
+            option.setBackgroundResource(background)
         }
+        tvFeedback.text = when {
+            !session.isAnswered -> ""
+            session.selectedAnswer == question.correctAnswer -> getString(R.string.answer_correct)
+            else -> getString(
+                R.string.answer_incorrect,
+                session.currentQuestion.options[
+                    question.correctAnswer -
+                        1
+                ]
+            )
+        }
+        btnSubmit.setText(
+            when {
+                !session.isAnswered -> R.string.submit_answer
+                session.currentIndex == session.total - 1 -> R.string.finish_quiz
+                else -> R.string.next_question
+            }
+        )
     }
 
-    private fun selectedOptionView(textView: TextView, selectedOptionNum : Int){
-        defaultOptionsView()
-        mSelectedOptionPosition = selectedOptionNum
-        textView.setTextColor(Color.parseColor("#363A43"))
-        textView.setTypeface(textView.typeface, Typeface.BOLD)
-        textView.background = ContextCompat.getDrawable(this, R.drawable.selected_option)
+    override fun onSaveInstanceState(outState: Bundle) {
+        val snapshot = session.snapshot()
+        outState.putInt(SAVED_INDEX, snapshot.index)
+        outState.putIntArray(SAVED_ANSWERS, snapshot.answers.toIntArray())
+        outState.putInt(SAVED_SELECTION, snapshot.selection ?: 0)
+        outState.putBoolean(SAVED_COMPLETE, snapshot.complete)
+        super.onSaveInstanceState(outState)
+    }
 
+    private fun showResult() {
+        startActivity(
+            Intent(this, ResultActivity::class.java).apply {
+                putExtra(Constants.USER_NAME, intent.getStringExtra(Constants.USER_NAME))
+                putExtra(Constants.CORRECT_ANSWERS, session.correctAnswers)
+                putExtra(Constants.TOTAL_QUESTIONS, session.total)
+            }
+        )
+        finish()
+    }
+
+    private companion object {
+        const val SAVED_INDEX = "quiz.index"
+        const val SAVED_ANSWERS = "quiz.answers"
+        const val SAVED_SELECTION = "quiz.selection"
+        const val SAVED_COMPLETE = "quiz.complete"
     }
 }
