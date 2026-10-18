@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         WindowCompat.getInsetsController(window, window.decorView)
-            .hide(WindowInsetsCompat.Type.statusBars())
+            ?.hide(WindowInsetsCompat.Type.statusBars())
         binding.buttonStart.setOnClickListener {
             val name = binding.etName.text.toString().trim()
             if (name.isBlank()) {

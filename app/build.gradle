@@ -19,6 +19,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    lint {
+        // Keep this visible while target-level behavior migration awaits device tests.
+        // This first slice is not a Play Store release; all other lint errors stay fatal.
+        warning 'ExpiredTargetSdkVersion'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
