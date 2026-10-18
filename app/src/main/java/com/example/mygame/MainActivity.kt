@@ -1,33 +1,39 @@
 package com.example.mygame
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import com.example.mygame.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-
-
-
-        val btn_start = findViewById<Button>(R.id.button_start)
-        val et_name = findViewById<EditText>(R.id.et_name)
-        btn_start.setOnClickListener{
-            if(et_name.text.toString().isEmpty()){
-                Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                val intent = Intent(this, QuizQuestionsActivity::class.java)
-                intent.putExtra(Constants.USER_NAME, et_name.text.toString())
-                startActivity(intent)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        WindowCompat.getInsetsController(window, window.decorView)
+            .hide(WindowInsetsCompat.Type.statusBars())
+        binding.buttonStart.setOnClickListener {
+            val name = binding.etName.text.toString().trim()
+            if (name.isBlank()) {
+                binding.etName.error = getString(R.string.enter_name)
+            } else {
+                startActivity(
+                    Intent(this, QuizQuestionsActivity::class.java).apply {
+                        putExtra(Constants.USER_NAME, name)
+                    }
+                )
                 finish()
+            }
+        }
+        binding.etName.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.buttonStart.performClick()
+                true
+            } else {
+                false
             }
         }
     }

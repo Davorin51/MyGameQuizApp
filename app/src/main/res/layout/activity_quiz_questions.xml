@@ -30,7 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:src="@drawable/brazil1"/>
+            android:src="@drawable/brazil_flag"
+            android:contentDescription="@string/flag_description"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,13 +117,23 @@
             tools:text = "Nokia"
             />
 
+        <TextView
+            android:id="@+id/tv_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="?android:attr/textColorPrimary" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btn_submit"
             android:background="@color/Primary"
             android:layout_margin="10dp"
-            android:text="SUBMIT"
+            android:text="@string/submit_answer"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="18sp"

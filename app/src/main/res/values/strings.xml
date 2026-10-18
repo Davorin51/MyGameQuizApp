@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MyGame</string>
+    <string name="enter_name">Please enter your name</string>
+    <string name="choose_answer">Choose an answer before submitting.</string>
+    <string name="submit_answer">Submit</string>
+    <string name="next_question">Next question</string>
+    <string name="finish_quiz">Finish</string>
+    <string name="answer_correct">Correct answer.</string>
+    <string name="answer_incorrect">Incorrect. Correct answer: %1$s.</string>
+    <string name="question_progress">%1$d / %2$d</string>
+    <string name="result_score">Your score is %1$d out of %2$d</string>
+    <string name="flag_description">Country flag used in this question</string>
 </resources>

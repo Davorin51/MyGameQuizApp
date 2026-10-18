@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original simplified geometric teaching illustration; not an official flag reproduction. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp" android:height="150dp" android:viewportWidth="240" android:viewportHeight="150">
+    <path android:fillColor="#16853B" android:pathData="M0,0H240V150H0Z" />
+    <path android:fillColor="#FFDB3A" android:pathData="M120,15L220,75L120,135L20,75Z" />
+    <path android:fillColor="#173B87" android:pathData="M120,39a36,36 0,1 0,0 72a36,36 0,1 0,0 -72" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="5" android:fillColor="#00000000"
+        android:pathData="M88,60Q122,53 151,83" />
+</vector>
